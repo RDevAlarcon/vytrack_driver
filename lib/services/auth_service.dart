@@ -20,7 +20,14 @@ class AuthService {
       } else {
         throw Exception('Token no recibido');
       }
-    } else {
+      return;
+    }
+
+    // Intenta exponer el mensaje que envía el backend
+    try {
+      final body = jsonDecode(res.body);
+      throw Exception(body is Map && body['message'] != null ? body['message'] : 'Login failed: ${res.statusCode}');
+    } catch (_) {
       throw Exception('Login failed: ${res.statusCode}');
     }
   }
