@@ -13,7 +13,7 @@ class LocationProvider extends ChangeNotifier {
     trackingEnabled = true;
     notifyListeners();
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 30), (_) async {
+    _timer = Timer.periodic(const Duration(seconds: 10), (_) async {
       try {
         final body = await _service.sendLocation(vehicleId: vehicleId, driverId: driverId);
         lastUpdate = LocationUpdate(
