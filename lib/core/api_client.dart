@@ -1,12 +1,16 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import '../core/config.dart';
-import '../services/auth_service.dart';
 
 class ApiClient {
-  final AuthService _auth = AuthService();
+  ApiClient({Future<String?> Function()? tokenProvider}) : _tokenProvider = tokenProvider ?? _defaultTokenProvider;
+
+  static const _tokenKey = 'auth_token';
+  static const FlutterSecureStorage _storage = FlutterSecureStorage();
+  final Future<String?> Function() _tokenProvider;
 
   Future<Map<String, String>> _headers(Map<String, String>? headers) async {
-    final token = await _auth.getToken();
+    final token = await _tokenProvider();
     final base = <String, String>{
       'Content-Type': 'application/json',
     };
@@ -34,4 +38,6 @@ class ApiClient {
   Future<http.Response> patch(String path, {Map<String, String>? headers, Object? body}) async {
     return http.patch(_buildUri(path), headers: await _headers(headers), body: body);
   }
+
+  static Future<String?> _defaultTokenProvider() => _storage.read(key: _tokenKey);
 }

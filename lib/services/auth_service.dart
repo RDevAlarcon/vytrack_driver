@@ -5,7 +5,7 @@ import '../core/api_client.dart';
 class AuthService {
   static const _tokenKey = 'auth_token';
   final _storage = const FlutterSecureStorage();
-  final ApiClient _client = ApiClient();
+  late final ApiClient _client = ApiClient(tokenProvider: () => _storage.read(key: _tokenKey));
 
   Future<void> login(String email, String password) async {
     final res = await _client.post(
